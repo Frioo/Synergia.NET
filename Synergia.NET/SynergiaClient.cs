@@ -79,6 +79,35 @@ namespace Synergia.NET
             }
         }
 
+        private void RefreshAccess()
+        {
+            RestClient refreshClient = new RestClient();
+            refreshClient.BaseUrl = new Uri(API_AUTH_URL);
+
+            RestRequest refreshRequest = new RestRequest();
+            refreshRequest.Method = Method.POST;
+            refreshRequest.AddParameter("grant_type", "refresh_token");
+            refreshRequest.AddParameter("refresh_token", refreshToken);
+
+            IRestResponse refreshResponse = refreshClient.Execute(refreshRequest);
+            if(refreshResponse.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                try
+                {
+                    JObject responseObject = JObject.Parse(refreshResponse.Content);
+
+                    accessToken = responseObject.GetValue("access_token").ToString();
+                    refreshToken = responseObject.GetValue("refresh_token").ToString();
+                }
+                catch(Exception ex)
+                {
+                    Log("Could not refresh access");
+                    Log(ex.Message);
+                    throw ex;
+                }
+            }
+        }
+
         private string Request(string endpoint)
         {
             if (!isLoggedIn)
@@ -100,6 +129,13 @@ namespace Synergia.NET
                 //Request successful
                 Log("request successful: " + endpoint);
                 return response.Content;
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                Log("request failed: " + endpoint);
+                Log("retrying request: " + endpoint);
+                RefreshAccess();
+                return Request(endpoint);
             }
             else
             {
