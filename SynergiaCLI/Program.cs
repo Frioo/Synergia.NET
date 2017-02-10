@@ -38,6 +38,7 @@ namespace SynergiaCLI
             Console.WriteLine("2. Lucky number");
             Console.WriteLine("3. Subjects");
             Console.WriteLine("4. Teachers");
+            Console.WriteLine("5. Subject - teacher map (lessons)");
 
             // Get input and display proper data
             char input = Console.ReadKey(false).KeyChar;
@@ -65,6 +66,15 @@ namespace SynergiaCLI
                     displayHeader();
                     displayTeachers();
                     displayFooter();
+                    break;
+                
+                case '5':
+                    displayHeader();
+                    displayLessons();
+                    displayFooter();
+                    break;
+
+                default:
                     break;
             }
         }
@@ -126,6 +136,20 @@ namespace SynergiaCLI
                 string name = tl[i].fullName;
                 string id = tl[i].id.ToString();
                 Console.WriteLine("{0} (id: {1})", td[id], id);
+            }
+        }
+
+        private static void displayLessons()
+        {
+            Console.WriteLine("Lessons:");
+            List<Lesson> ll = client.GetLessons();
+            Dictionary<string, Teacher> td = client.GetTeachersIDDictionary();
+            Dictionary<string, string> sd = client.GetSubjectsIDNameDictionary();
+            for(int i = 0; i < ll.Count; i++)
+            {
+                string teacherName = td[ll[i].teacherId.ToString()].fullName;
+                string subjectName = sd[ll[i].subjectId.ToString()];
+                Console.WriteLine("{0} - {1}", subjectName, teacherName);
             }
         }
     }

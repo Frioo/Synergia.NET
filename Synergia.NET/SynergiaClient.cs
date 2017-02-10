@@ -27,9 +27,12 @@ namespace Synergia.NET
         private LuckyNumber lucky;
         private List<Subject> subjects;
         private List<Teacher> teachers;
+        private List<Lesson> lessons;
 
         private Dictionary<string, string> subjectsIdNameDictionary;
+        private Dictionary<string, Subject> subjectsIdDictionary;
         private Dictionary<string, string> teacherIdNameDictionary;
+        private Dictionary<string, Teacher> teacherIdDictionary;
         #endregion
 
         #region Core
@@ -111,7 +114,7 @@ namespace Synergia.NET
         #region Getters
         public Account GetAccount()
         {
-            JObject accountObject = (JObject)JObject.Parse(Request("/Me")).SelectToken("Me").SelectToken("Account");
+            JObject accountObject = JObject.Parse(Request("/Me")).SelectToken("Me").SelectToken("Account").ToObject<JObject>();
 
             try
             {
@@ -136,7 +139,7 @@ namespace Synergia.NET
 
         public LuckyNumber GetLuckyNumber()
         {
-            JObject luckyNumberObject = (JObject)JObject.Parse(Request("/LuckyNumbers")).SelectToken("LuckyNumber");
+            JObject luckyNumberObject = JObject.Parse(Request("/LuckyNumbers")).SelectToken("LuckyNumber").ToObject<JObject>();
 
             try
             {
@@ -156,14 +159,14 @@ namespace Synergia.NET
 
         public List<Subject> GetSubjects()
         {
-            JArray arr = (JArray)JObject.Parse(Request("/Subjects"))["Subjects"];
+            JArray arr = JObject.Parse(Request("/Subjects"))["Subjects"].ToObject<JArray>();
             List<Subject> Subjects = new List<Subject>();
 
             try
             {
                 for (int i = 0; i < arr.Count; i++)
                 {
-                    JObject subjectObject = (JObject)arr[i];
+                    JObject subjectObject = arr[i].ToObject<JObject>();
 
                     int id = int.Parse(subjectObject.GetValue("Id").ToString());
                     string name = subjectObject.GetValue("Name").ToString();
@@ -187,14 +190,14 @@ namespace Synergia.NET
 
         public List<Teacher> GetTeachers()
         {
-            JArray arr = (JArray)JObject.Parse(Request("/Users"))["Users"];
+            JArray arr = JObject.Parse(Request("/Users"))["Users"].ToObject<JArray>();
             List<Teacher> Teachers = new List<Teacher>();
 
             try
             {
                 for (int i = 0; i < arr.Count; i++)
                 {
-                    JObject teacherObject = (JObject)arr[i];
+                    JObject teacherObject = arr[i].ToObject<JObject>();
 
                     int id = int.Parse(teacherObject.GetValue("Id").ToString());
                     string firstName = teacherObject.GetValue("FirstName").ToString();
@@ -213,13 +216,42 @@ namespace Synergia.NET
                 throw new Exception("parsing response failed");
             }
         }
+
+        public List<Lesson> GetLessons()
+        {
+            JArray arr = JObject.Parse(Request("/Lessons"))["Lessons"].ToObject<JArray>();
+            List<Lesson> Lessons = new List<Lesson>();
+
+            try
+            {
+                for(int i = 0; i < arr.Count; i++)
+                {
+                    JObject lessonObject = arr[i].ToObject<JObject>();
+
+                    int id = int.Parse(lessonObject.GetValue("Id").ToString());
+                    int teacherId = int.Parse(lessonObject.SelectToken("Teacher").ToObject<JObject>().GetValue("Id").ToString());
+                    int subjectId = int.Parse(lessonObject.SelectToken("Subject").ToObject<JObject>().GetValue("Id").ToString());
+
+                    Lesson lesson = new Lesson(id, teacherId, subjectId);
+                    Lessons.Add(lesson);
+                }
+
+                this.lessons = Lessons;
+                return Lessons;
+            }
+            catch
+            {
+                Log("failed to parse response (lessons)");
+                throw new Exception("parsing response failed");
+            }
+        }
         #endregion
 
         #region Utils
         public Dictionary<string, string> GetSubjectsIDNameDictionary()
         {
             Dictionary<string, string> dictionary = new Dictionary<string, string>();
-            if (subjects == null)
+            if(subjects == null)
             {
                 GetSubjects();
             }
@@ -231,6 +263,23 @@ namespace Synergia.NET
                 dictionary.Add(id, name);
             }
             subjectsIdNameDictionary = dictionary;
+            return dictionary;
+        }
+
+        public Dictionary<string, Subject> GetSubjectsIDDictionary()
+        {
+            Dictionary<string, Subject> dictionary = new Dictionary<string, Subject>();
+            if(subjects == null)
+            {
+                GetSubjects();
+            }
+
+            foreach(Subject s in this.subjects)
+            {
+                string id = s.id.ToString();
+                dictionary.Add(id, s);
+            }
+            subjectsIdDictionary = dictionary;
             return dictionary;
         }
 
@@ -249,6 +298,23 @@ namespace Synergia.NET
                 dictionary.Add(id, name);
             }
             teacherIdNameDictionary = dictionary;
+            return dictionary;
+        }
+
+        public Dictionary<string, Teacher> GetTeachersIDDictionary()
+        {
+            Dictionary<string, Teacher> dictionary = new Dictionary<string, Teacher>();
+            if(teachers == null)
+            {
+                GetTeachers();
+            }
+
+            foreach(Teacher t in this.teachers)
+            {
+                string id = t.id.ToString();
+                dictionary.Add(id, t);
+            }
+            teacherIdDictionary = dictionary;
             return dictionary;
         }
         #endregion
