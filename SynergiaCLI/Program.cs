@@ -39,6 +39,7 @@ namespace SynergiaCLI
             Console.WriteLine("3. Subjects");
             Console.WriteLine("4. Teachers");
             Console.WriteLine("5. Subject - teacher map (lessons)");
+            Console.WriteLine("6. Events");
 
             // Get input and display proper data
             char input = Console.ReadKey(false).KeyChar;
@@ -74,7 +75,15 @@ namespace SynergiaCLI
                     displayFooter();
                     break;
 
+                case '6':
+                    displayHeader();
+                    displayEvents();
+                    displayFooter();
+                    break;
+
                 default:
+                    displayHeader();
+                    displayMenu();
                     break;
             }
         }
@@ -117,12 +126,12 @@ namespace SynergiaCLI
         {
             Console.WriteLine("Subjects:");
             List<Subject> sl = client.GetSubjects();
-            Dictionary<string, string> sd = client.GetSubjectsIDNameDictionary();
+            Dictionary<string, Subject> sd = client.GetSubjectsIDDictionary();
             for (int i = 0; i < sl.Count; i++)
             {
                 string name = sl[i].name;
                 string id = sl[i].id.ToString();
-                Console.WriteLine("{0} (id: {1})", sd[id], id);
+                Console.WriteLine("{0} (id: {1})", sd[id].name, id);
             }
         }
 
@@ -150,6 +159,21 @@ namespace SynergiaCLI
                 string teacherName = td[ll[i].teacherId.ToString()].fullName;
                 string subjectName = sd[ll[i].subjectId.ToString()];
                 Console.WriteLine("{0} - {1}", subjectName, teacherName);
+            }
+        }
+
+        private static void displayEvents()
+        {
+            Console.WriteLine("Events:");
+            List<Event> el = client.GetEvents();
+            Dictionary<string, Teacher> td = client.GetTeachersIDDictionary();
+            Dictionary<string, EventCategory> ecd = client.GetEventCategoriesIDDictionary();
+            for(int i = 0; i < el.Count; i++)
+            {
+                string date = el[i].date.ToString();
+                string id = el[i].id.ToString();
+                string category = ecd[el[i].eventCategoryId].name;
+                Console.WriteLine("{0} - {1}(id: {2})", category, date, id);
             }
         }
     }

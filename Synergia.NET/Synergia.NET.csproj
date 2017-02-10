@@ -53,6 +53,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Account.cs" />
+    <Compile Include="Models\Event.cs" />
+    <Compile Include="Models\EventCategory.cs" />
     <Compile Include="Models\Lesson.cs" />
     <Compile Include="Models\LuckyNumber.cs" />
     <Compile Include="Models\Subject.cs" />

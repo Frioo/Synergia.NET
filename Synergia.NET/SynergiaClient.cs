@@ -28,11 +28,14 @@ namespace Synergia.NET
         private List<Subject> subjects;
         private List<Teacher> teachers;
         private List<Lesson> lessons;
+        private List<Event> events;
+        private List<EventCategory> eventCategories;
 
         private Dictionary<string, string> subjectsIdNameDictionary;
         private Dictionary<string, Subject> subjectsIdDictionary;
         private Dictionary<string, string> teacherIdNameDictionary;
         private Dictionary<string, Teacher> teacherIdDictionary;
+        private Dictionary<string, EventCategory> eventCategoriesIdDictionary;
         #endregion
 
         #region Core
@@ -63,9 +66,11 @@ namespace Synergia.NET
                     refreshToken = response.GetValue("refresh_token").ToString();
                     isLoggedIn = true;
                 }
-                catch
+                catch(Exception ex)
                 {
                     Log("login failed");
+                    Log(ex.Message);
+                    throw ex;
                 }
             }
             else
@@ -130,10 +135,11 @@ namespace Synergia.NET
                 this.account = account;
                 return account;
             }
-            catch
+            catch(Exception ex)
             {
                 Log("failed to parse response (me/account)");
-                throw new Exception("parsing response failed");
+                Log(ex.Message);
+                throw ex;
             }
         }
 
@@ -150,10 +156,11 @@ namespace Synergia.NET
                 this.lucky = luckyNumber;
                 return luckyNumber;
             }
-            catch
+            catch(Exception ex)
             {
                 Log("failed to parse response (lucky numbers)");
-                throw new Exception("parsing response failed");
+                Log(ex.Message);
+                throw ex;
             }
         }
 
@@ -181,10 +188,11 @@ namespace Synergia.NET
                 this.subjects = Subjects;
                 return Subjects;
             }
-            catch
+            catch(Exception ex)
             {
                 Log("failed to parse response (subjects)");
-                throw new Exception("parsing response failed");
+                Log(ex.Message);
+                throw ex;
             }
         }
 
@@ -210,10 +218,11 @@ namespace Synergia.NET
                 this.teachers = Teachers;
                 return Teachers;
             }
-            catch
+            catch(Exception ex)
             {
                 Log("failed to parse response (teachers)");
-                throw new Exception("parsing response failed");
+                Log(ex.Message);
+                throw ex;
             }
         }
 
@@ -239,10 +248,72 @@ namespace Synergia.NET
                 this.lessons = Lessons;
                 return Lessons;
             }
-            catch
+            catch(Exception ex)
             {
                 Log("failed to parse response (lessons)");
-                throw new Exception("parsing response failed");
+                Log(ex.Message);
+                throw ex;
+            }
+        }
+
+        public List<Event> GetEvents()
+        {
+            JArray arr = JObject.Parse(Request("/HomeWorks"))["HomeWorks"].ToObject<JArray>();
+            List<Event> Events = new List<Event>();
+
+            try
+            {
+                for(int i = 0; i < arr.Count; i++)
+                {
+                    JObject eventObject = arr[i].ToObject<JObject>();
+
+                    string id = eventObject.GetValue("Id").ToString();
+                    string description = eventObject.GetValue("Content").ToString();
+                    LocalDate date = LocalDatePattern.CreateWithInvariantCulture("yyyy-MM-dd").Parse(eventObject.GetValue("Date").ToString()).Value;
+                    string eventCategoryId = eventObject.SelectToken("Category").ToObject<JObject>().GetValue("Id").ToString();
+                    int lessonNumber = int.Parse(eventObject.GetValue("LessonNo").ToString());
+                    string authorId = eventObject.SelectToken("CreatedBy").ToObject<JObject>().GetValue("Id").ToString();
+                    LocalDateTime addDate = LocalDateTimePattern.CreateWithInvariantCulture("yyyy-MM-dd HH:mm:ss").Parse(eventObject.GetValue("AddDate").ToString()).Value;
+
+                    Event e = new Event(id, description, date, eventCategoryId, lessonNumber, authorId, addDate);
+                    Events.Add(e);
+                }
+                this.events = Events;
+                return Events;
+            }
+            catch(Exception ex)
+            {
+                Log("failed to parse response (events)");
+                Log(ex.Message);
+                throw ex;
+            }
+        }
+
+        public List<EventCategory> GetEventCategories()
+        {
+            JArray arr = JObject.Parse(Request("/HomeWorks/Categories"))["Categories"].ToObject<JArray>();
+            List<EventCategory> EventCategories = new List<EventCategory>();
+
+            try
+            {
+                for (int i = 0; i < arr.Count; i++)
+                {
+                    JObject eventCategoryObject = arr[i].ToObject<JObject>();
+
+                    string id = eventCategoryObject.GetValue("Id").ToString();
+                    string name = eventCategoryObject.GetValue("Name").ToString();
+
+                    EventCategory ec = new EventCategory(id, name);
+                    EventCategories.Add(ec);
+                }
+                this.eventCategories = EventCategories;
+                return EventCategories;
+            }
+            catch(Exception ex)
+            {
+                Log("failed to parse response (event categories)");
+                Log(ex.Message);
+                throw ex;
             }
         }
         #endregion
@@ -315,6 +386,23 @@ namespace Synergia.NET
                 dictionary.Add(id, t);
             }
             teacherIdDictionary = dictionary;
+            return dictionary;
+        }
+
+        public Dictionary<string, EventCategory> GetEventCategoriesIDDictionary()
+        {
+            Dictionary<string, EventCategory> dictionary = new Dictionary<string, EventCategory>();
+            if(eventCategories == null)
+            {
+                GetEventCategories();
+            }
+
+            foreach(EventCategory ec in this.eventCategories)
+            {
+                string id = ec.id.ToString();
+                dictionary.Add(id, ec);
+            }
+            eventCategoriesIdDictionary = dictionary;
             return dictionary;
         }
         #endregion
