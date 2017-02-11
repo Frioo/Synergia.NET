@@ -41,6 +41,7 @@ namespace Synergia.NET
         private Dictionary<string, EventCategory> eventCategoriesIdDictionary;
         private Dictionary<string, Attendance> attendancesIdDictionary;
         private Dictionary<string, AttendanceCategory> attendanceCategoriesIdDictionary;
+        private Dictionary<string, Grade> gradesIdDictionary;
         #endregion
 
         #region Core
@@ -591,10 +592,27 @@ namespace Synergia.NET
 
             foreach (AttendanceCategory ac in this.attendanceCategories)
             {
-                string id = ac.id.ToString();
+                string id = ac.id;
                 dictionary.Add(id, ac);
             }
             attendanceCategoriesIdDictionary = dictionary;
+            return dictionary;
+        }
+
+        public Dictionary<string, Grade> GetGradesIDDictionary()
+        {
+            Dictionary<string, Grade> dictionary = new Dictionary<string, Grade>();
+            if(gradeCategories == null)
+            {
+                GetGrades();
+            }
+
+            foreach(Grade g in this.grades)
+            {
+                string id = g.id;
+                dictionary.Add(id, g);
+            }
+            gradesIdDictionary = dictionary;
             return dictionary;
         }
         #endregion
