@@ -42,6 +42,7 @@ namespace Synergia.NET
         private Dictionary<string, Attendance> attendancesIdDictionary;
         private Dictionary<string, AttendanceCategory> attendanceCategoriesIdDictionary;
         private Dictionary<string, Grade> gradesIdDictionary;
+        private Dictionary<string, GradeCategory> gradeCategoriesIdDictionary;
         #endregion
 
         #region Core
@@ -476,11 +477,18 @@ namespace Synergia.NET
                 for(int i = 0; i < arr.Count; i++)
                 {
                     JObject gradeCategoryObject = arr[i].ToObject<JObject>();
-
+                    Log(i.ToString());
                     string id = gradeCategoryObject.GetValue("Id").ToString();
                     string name = gradeCategoryObject.GetValue("Name").ToString();
-                    int weight = int.Parse(gradeCategoryObject.GetValue("Weight").ToString());
-
+                    int weight;
+                    if(gradeCategoryObject.Property("weight") != null)
+                    {
+                        weight = int.Parse(gradeCategoryObject.GetValue("Weight").ToString());
+                    }
+                    else
+                    {
+                        weight = 0;
+                    }
                     GradeCategory gc = new GradeCategory(id, name, weight);
                     GradeCategories.Add(gc);
                 }
@@ -613,6 +621,23 @@ namespace Synergia.NET
                 dictionary.Add(id, g);
             }
             gradesIdDictionary = dictionary;
+            return dictionary;
+        }
+
+        public Dictionary<string, GradeCategory> GetGradeCategoriesIDDictionary()
+        {
+            Dictionary<string, GradeCategory> dictionary = new Dictionary<string, GradeCategory>();
+            if(gradeCategories == null)
+            {
+                GetGradeCategories();
+            }
+
+            foreach(GradeCategory gc in this.gradeCategories)
+            {
+                string id = gc.id;
+                dictionary.Add(id, gc);
+            }
+            gradeCategoriesIdDictionary = dictionary;
             return dictionary;
         }
         #endregion
