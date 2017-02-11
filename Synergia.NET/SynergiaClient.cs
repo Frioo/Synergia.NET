@@ -33,6 +33,7 @@ namespace Synergia.NET
         private List<Attendance> attendances;
         private List<AttendanceCategory> attendanceCategories;
         private List<Grade> grades;
+        private List<GradeCategory> gradeCategories;
 
         private Dictionary<string, Subject> subjectsIdDictionary;
         private Dictionary<string, Teacher> teachersIdDictionary;
@@ -459,6 +460,35 @@ namespace Synergia.NET
             catch(Exception ex)
             {
                 Log("failed to parse response (grades)");
+                Log(ex.Message);
+                throw ex;
+            }
+        }
+
+        public List<GradeCategory> GetGradeCategories()
+        {
+            JArray arr = JObject.Parse(Request("/Grades/Categories"))["Categories"].ToObject<JArray>();
+            List<GradeCategory> GradeCategories = new List<GradeCategory>();
+
+            try
+            {
+                for(int i = 0; i < arr.Count; i++)
+                {
+                    JObject gradeCategoryObject = arr[i].ToObject<JObject>();
+
+                    string id = gradeCategoryObject.GetValue("Id").ToString();
+                    string name = gradeCategoryObject.GetValue("Name").ToString();
+                    int weight = int.Parse(gradeCategoryObject.GetValue("Weight").ToString());
+
+                    GradeCategory gc = new GradeCategory(id, name, weight);
+                    GradeCategories.Add(gc);
+                }
+                gradeCategories = GradeCategories;
+                return GradeCategories;
+            }
+            catch(Exception ex)
+            {
+                Log("failed to parse response (grade categories)");
                 Log(ex.Message);
                 throw ex;
             }
