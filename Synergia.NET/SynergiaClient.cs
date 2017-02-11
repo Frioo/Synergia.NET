@@ -30,12 +30,15 @@ namespace Synergia.NET
         private List<Lesson> lessons;
         private List<Event> events;
         private List<EventCategory> eventCategories;
+        private List<Attendance> attendances;
+        private List<AttendanceCategory> attendanceCategories;
 
-        private Dictionary<string, string> subjectsIdNameDictionary;
         private Dictionary<string, Subject> subjectsIdDictionary;
-        private Dictionary<string, string> teacherIdNameDictionary;
-        private Dictionary<string, Teacher> teacherIdDictionary;
+        private Dictionary<string, Teacher> teachersIdDictionary;
+        private Dictionary<string, Event> eventsIdDictionary;
         private Dictionary<string, EventCategory> eventCategoriesIdDictionary;
+        private Dictionary<string, Attendance> attendancesIdDictionary;
+        private Dictionary<string, AttendanceCategory> attendanceCategoriesIdDictionary;
         #endregion
 
         #region Core
@@ -273,15 +276,15 @@ namespace Synergia.NET
                 {
                     JObject lessonObject = arr[i].ToObject<JObject>();
 
-                    int id = int.Parse(lessonObject.GetValue("Id").ToString());
-                    int teacherId = int.Parse(lessonObject.SelectToken("Teacher").ToObject<JObject>().GetValue("Id").ToString());
-                    int subjectId = int.Parse(lessonObject.SelectToken("Subject").ToObject<JObject>().GetValue("Id").ToString());
+                    string id = lessonObject.GetValue("Id").ToString();
+                    string teacherId = lessonObject.SelectToken("Teacher").ToObject<JObject>().GetValue("Id").ToString();
+                    string subjectId = lessonObject.SelectToken("Subject").ToObject<JObject>().GetValue("Id").ToString();
 
                     Lesson lesson = new Lesson(id, teacherId, subjectId);
                     Lessons.Add(lesson);
                 }
 
-                this.lessons = Lessons;
+                lessons = Lessons;
                 return Lessons;
             }
             catch(Exception ex)
@@ -352,27 +355,73 @@ namespace Synergia.NET
                 throw ex;
             }
         }
+
+        public List<Attendance> GetAttendances()
+        {
+            JArray arr = JObject.Parse(Request("/Attendances"))["Attendances"].ToObject<JArray>();
+            List<Attendance> Attendances = new List<Attendance>();
+
+            try
+            {
+                for(int i = 0; i < arr.Count; i++)
+                {
+                    JObject attendanceObject = arr[i].ToObject<JObject>();
+
+                    string id = attendanceObject.GetValue("Id").ToString();
+                    string lessonId = attendanceObject.SelectToken("Lesson").ToObject<JObject>().GetValue("Id").ToString();
+                    // trip
+                    LocalDate date = LocalDatePattern.CreateWithInvariantCulture("yyyy-MM-dd").Parse(attendanceObject.GetValue("Date").ToString()).Value;
+                    LocalDateTime addDate = LocalDateTimePattern.CreateWithInvariantCulture("yyyy-MM-dd HH:mm:ss").Parse(attendanceObject.GetValue("AddDate").ToString()).Value;
+                    int lessonNumber = int.Parse(attendanceObject.GetValue("LessonNo").ToString());
+                    int semesterNumber = int.Parse(attendanceObject.GetValue("Semester").ToString());
+                    string typeId = attendanceObject.SelectToken("Type").ToObject<JObject>().GetValue("Id").ToString();
+                    string authorId = attendanceObject.SelectToken("AddedBy").ToObject<JObject>().GetValue("Id").ToString();
+
+                    Attendance attendance = new Attendance(id, lessonId, date, addDate, lessonNumber, semesterNumber, typeId, authorId);
+                    Attendances.Add(attendance);
+                }
+                attendances = Attendances;
+                return Attendances;
+            }
+            catch(Exception ex)
+            {
+                Log("failed to parse response (attendances)");
+                Log(ex.Message);
+                throw ex;
+            }
+        }
+
+        public List<AttendanceCategory> GetAttendanceCategories()
+        {
+            JArray arr = JObject.Parse(Request("/Attendances/Types"))["Types"].ToObject<JArray>();
+            List<AttendanceCategory> AttendanceCategories = new List<AttendanceCategory>();
+
+            try
+            {
+                for(int i = 0; i < arr.Count; i++)
+                {
+                    JObject attendanceCategoryObject = arr[i].ToObject<JObject>();
+
+                    string id = attendanceCategoryObject.GetValue("Id").ToString();
+                    string name = attendanceCategoryObject.GetValue("Name").ToString();
+                    string shortName = attendanceCategoryObject.GetValue("Short").ToString();
+
+                    AttendanceCategory attendanceCategory = new AttendanceCategory(id, name, shortName);
+                    AttendanceCategories.Add(attendanceCategory);
+                }
+                attendanceCategories = AttendanceCategories;
+                return AttendanceCategories;
+            }
+            catch(Exception ex)
+            {
+                Log("failed to parse response (attendance categories)");
+                Log(ex.Message);
+                throw ex;
+            }
+        }
         #endregion
 
         #region Utils
-        public Dictionary<string, string> GetSubjectsIDNameDictionary()
-        {
-            Dictionary<string, string> dictionary = new Dictionary<string, string>();
-            if(subjects == null)
-            {
-                GetSubjects();
-            }
-
-            foreach (Subject s in this.subjects)
-            {
-                string name = s.name;
-                string id = s.id.ToString();
-                dictionary.Add(id, name);
-            }
-            subjectsIdNameDictionary = dictionary;
-            return dictionary;
-        }
-
         public Dictionary<string, Subject> GetSubjectsIDDictionary()
         {
             Dictionary<string, Subject> dictionary = new Dictionary<string, Subject>();
@@ -390,24 +439,6 @@ namespace Synergia.NET
             return dictionary;
         }
 
-        public Dictionary<string, string> GetTeachersIDNameDictionary()
-        {
-            Dictionary<string, string> dictionary = new Dictionary<string, string>();
-            if (teachers == null)
-            {
-                GetTeachers();
-            }
-
-            foreach (Teacher t in this.teachers)
-            {
-                string name = t.fullName;
-                string id = t.id.ToString();
-                dictionary.Add(id, name);
-            }
-            teacherIdNameDictionary = dictionary;
-            return dictionary;
-        }
-
         public Dictionary<string, Teacher> GetTeachersIDDictionary()
         {
             Dictionary<string, Teacher> dictionary = new Dictionary<string, Teacher>();
@@ -421,7 +452,24 @@ namespace Synergia.NET
                 string id = t.id.ToString();
                 dictionary.Add(id, t);
             }
-            teacherIdDictionary = dictionary;
+            teachersIdDictionary = dictionary;
+            return dictionary;
+        }
+
+        public Dictionary<string, Event> GetEventsIDDictionary()
+        {
+            Dictionary<string, Event> dictionary = new Dictionary<string, Event>();
+            if (events == null)
+            {
+                GetEvents();
+            }
+
+            foreach(Event e in this.events)
+            {
+                string id = e.id.ToString();
+                dictionary.Add(id, e);
+            }
+            eventsIdDictionary = dictionary;
             return dictionary;
         }
 
@@ -439,6 +487,40 @@ namespace Synergia.NET
                 dictionary.Add(id, ec);
             }
             eventCategoriesIdDictionary = dictionary;
+            return dictionary;
+        }
+
+        public Dictionary<string, Attendance> GetAttendancesIDDictionary()
+        {
+            Dictionary<string, Attendance> dictionary = new Dictionary<string, Attendance>();
+            if(attendances == null)
+            {
+                GetAttendances();
+            }
+
+            foreach(Attendance a in this.attendances)
+            {
+                string id = a.id.ToString();
+                dictionary.Add(id, a);
+            }
+            attendancesIdDictionary = dictionary;
+            return dictionary;
+        }
+
+        public Dictionary<string, AttendanceCategory> GetAttendanceCategoriesIDDictionary()
+        {
+            Dictionary<string, AttendanceCategory> dictionary = new Dictionary<string, AttendanceCategory>();
+            if (attendanceCategories == null)
+            {
+                GetAttendanceCategories();
+            }
+
+            foreach (AttendanceCategory ac in this.attendanceCategories)
+            {
+                string id = ac.id.ToString();
+                dictionary.Add(id, ac);
+            }
+            attendanceCategoriesIdDictionary = dictionary;
             return dictionary;
         }
         #endregion

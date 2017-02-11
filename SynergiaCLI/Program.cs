@@ -40,6 +40,7 @@ namespace SynergiaCLI
             Console.WriteLine("4. Teachers");
             Console.WriteLine("5. Subject - teacher map (lessons)");
             Console.WriteLine("6. Events");
+            Console.WriteLine("7. Attendances");
 
             // Get input and display proper data
             char input = Console.ReadKey(false).KeyChar;
@@ -78,6 +79,12 @@ namespace SynergiaCLI
                 case '6':
                     displayHeader();
                     displayEvents();
+                    displayFooter();
+                    break;
+
+                case '7':
+                    displayHeader();
+                    displayAttendances();
                     displayFooter();
                     break;
 
@@ -139,12 +146,12 @@ namespace SynergiaCLI
         {
             Console.WriteLine("Teachers:");
             List<Teacher> tl = client.GetTeachers();
-            Dictionary<string, string> td = client.GetTeachersIDNameDictionary();
+            Dictionary<string, Teacher> td = client.GetTeachersIDDictionary();
             for (int i = 0; i < tl.Count; i++)
             {
                 string name = tl[i].fullName;
                 string id = tl[i].id.ToString();
-                Console.WriteLine("{0} (id: {1})", td[id], id);
+                Console.WriteLine("{0} (id: {1})", td[id].fullName, id);
             }
         }
 
@@ -153,11 +160,11 @@ namespace SynergiaCLI
             Console.WriteLine("Lessons:");
             List<Lesson> ll = client.GetLessons();
             Dictionary<string, Teacher> td = client.GetTeachersIDDictionary();
-            Dictionary<string, string> sd = client.GetSubjectsIDNameDictionary();
+            Dictionary<string, Subject> sd = client.GetSubjectsIDDictionary();
             for(int i = 0; i < ll.Count; i++)
             {
                 string teacherName = td[ll[i].teacherId.ToString()].fullName;
-                string subjectName = sd[ll[i].subjectId.ToString()];
+                string subjectName = sd[ll[i].subjectId].name;
                 Console.WriteLine("{0} - {1}", subjectName, teacherName);
             }
         }
@@ -174,6 +181,20 @@ namespace SynergiaCLI
                 string id = el[i].id.ToString();
                 string category = ecd[el[i].eventCategoryId].name;
                 Console.WriteLine("{0} - {1}(id: {2})", category, date, id);
+            }
+        }
+
+        private static void displayAttendances()
+        {
+            Console.WriteLine("Attendances:");
+            List<Attendance> al = client.GetAttendances();
+            Dictionary<string, AttendanceCategory> acd = client.GetAttendanceCategoriesIDDictionary();
+            for(int i = 0; i < al.Count; i++)
+            {
+                string category = acd[al[i].typeId].name;
+                string date = al[i].date.ToString();
+                string id = al[i].id;
+                Console.WriteLine("{0} - {1} (id: {2})", category, date, id);
             }
         }
     }
