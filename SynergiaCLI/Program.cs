@@ -41,6 +41,7 @@ namespace SynergiaCLI
             Console.WriteLine("5. Subject - teacher map (lessons)");
             Console.WriteLine("6. Events");
             Console.WriteLine("7. Attendances");
+            Console.WriteLine("8. Grades");
 
             // Get input and display proper data
             char input = Console.ReadKey(false).KeyChar;
@@ -85,6 +86,12 @@ namespace SynergiaCLI
                 case '7':
                     displayHeader();
                     displayAttendances();
+                    displayFooter();
+                    break;
+
+                case '8':
+                    displayHeader();
+                    displayGrades();
                     displayFooter();
                     break;
 
@@ -195,6 +202,19 @@ namespace SynergiaCLI
                 string date = al[i].date.ToString();
                 string id = al[i].id;
                 Console.WriteLine("{0} - {1} (id: {2})", category, date, id);
+            }
+        }
+
+        private static void displayGrades()
+        {
+            Console.WriteLine("Grades:");
+            List<Grade> gl = client.GetGrades();
+            for(int i = 0; i < gl.Count; i++)
+            {
+                string grade = gl[i].grade.ToString();
+                string date = gl[i].date.ToString();
+                string id = gl[i].id;
+                Console.WriteLine("{0} - {1} (id: {2})", grade, date, id);
             }
         }
     }
