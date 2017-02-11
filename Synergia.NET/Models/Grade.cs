@@ -23,8 +23,9 @@ namespace Synergia.NET.Models
         public bool isSemesterProposition { get; }
         public bool isFinalGrade { get; }
         public bool isFinalProposition { get; }
+        public string GradeCommentID { get; }
 
-        public Grade(string id, string lessonId, string subjectId, string categoryId, string authorId, string grade, LocalDate date, LocalDateTime addDate, int semesterNumber, bool isConstituent,bool isSemesterGrade, bool isSemesterProposition, bool isFinalGrade, bool isFinalProposition)
+        public Grade(string id, string lessonId, string subjectId, string categoryId, string authorId, string grade, LocalDate date, LocalDateTime addDate, int semesterNumber, bool isConstituent,bool isSemesterGrade, bool isSemesterProposition, bool isFinalGrade, bool isFinalProposition, string gradeCommentId)
         {
             this.id = id;
             this.lessonId = lessonId;
@@ -40,6 +41,7 @@ namespace Synergia.NET.Models
             this.isSemesterProposition = isSemesterProposition;
             this.isFinalGrade = isFinalGrade;
             this.isFinalProposition = isFinalProposition;
+            this.GradeCommentID = gradeCommentId;
         }
     }
 }

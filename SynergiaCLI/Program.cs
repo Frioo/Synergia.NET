@@ -209,14 +209,19 @@ namespace SynergiaCLI
         {
             Console.WriteLine("Grades:");
             List<Grade> gl = client.GetGrades();
-            Dictionary<string, GradeCategory> gcd = client.GetGradeCategoriesIDDictionary();
+            Dictionary<string, GradeCategory> gcad = client.GetGradeCategoriesIDDictionary();
+            Dictionary<string, GradeComment> gcod = client.GetGradeCommentsIDDictionary();
             for(int i = 0; i < gl.Count; i++)
             {
-                string category = gcd[gl[i].categoryId].name;
                 string grade = gl[i].grade.ToString();
+                string category = gcad[gl[i].categoryId].name;
+                string comment = gcod[gl[i].GradeCommentID].Text;
                 string date = gl[i].date.ToString();
                 string id = gl[i].id;
-                Console.WriteLine("{0} - {1} - {2} (id: {3})", category,grade, date, id);
+                Console.WriteLine($"Grade: {grade} (id: {id})");
+                Console.WriteLine($"Category: {category}");
+                Console.WriteLine($"Comment: {comment}");
+                Console.WriteLine($"Date: {date}" + Environment.NewLine);
             }
         }
     }

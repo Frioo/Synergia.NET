@@ -34,6 +34,7 @@ namespace Synergia.NET
         private List<AttendanceCategory> attendanceCategories;
         private List<Grade> grades;
         private List<GradeCategory> gradeCategories;
+        private List<GradeComment> gradeComments;
 
         private Dictionary<string, Subject> subjectsIdDictionary;
         private Dictionary<string, Teacher> teachersIdDictionary;
@@ -43,6 +44,7 @@ namespace Synergia.NET
         private Dictionary<string, AttendanceCategory> attendanceCategoriesIdDictionary;
         private Dictionary<string, Grade> gradesIdDictionary;
         private Dictionary<string, GradeCategory> gradeCategoriesIdDictionary;
+        private Dictionary<string, GradeComment> gradeCommentsIdDictionary;
         #endregion
 
         #region Core
@@ -441,19 +443,25 @@ namespace Synergia.NET
                     string categoryId = gradeObject.SelectToken("Category").ToObject<JObject>().GetValue("Id").ToString();
                     string authorId = gradeObject.SelectToken("AddedBy").ToObject<JObject>().GetValue("Id").ToString();
                     string grade = gradeObject.GetValue("Grade").ToString();
-                    Log("grade is ok");
                     LocalDate date = LocalDatePattern.CreateWithInvariantCulture("yyyy-MM-dd").Parse(gradeObject.GetValue("Date").ToString()).Value;
-                    Log("date is ok");
                     LocalDateTime addDate = LocalDateTimePattern.CreateWithInvariantCulture("yyyy-MM-dd HH:mm:ss").Parse(gradeObject.GetValue("AddDate").ToString()).Value;
-                    Log("add date is ok");
                     int semesterNumber = int.Parse(gradeObject.GetValue("Semester").ToString());
                     bool isConstituent = bool.Parse(gradeObject.GetValue("IsConstituent").ToString());
                     bool isSemesterGrade = bool.Parse(gradeObject.GetValue("IsSemester").ToString());
                     bool isSemesterProposition = bool.Parse(gradeObject.GetValue("IsSemesterProposition").ToString());
                     bool isFinalGrade = bool.Parse(gradeObject.GetValue("IsFinal").ToString());
                     bool isFinalProposition = bool.Parse(gradeObject.GetValue("IsFinalProposition").ToString());
+                    string gradeCommentId;
+                    if (gradeObject.Property("Comments") != null)
+                    {
+                        gradeCommentId = gradeObject.SelectToken("Comments").ToObject<JArray>()[0].ToObject<JObject>().GetValue("Id").ToString();
+                    }
+                    else
+                    {
+                        gradeCommentId = String.Empty;
+                    }
 
-                    Grade g = new Grade(id, lessonId, subjectId, categoryId, authorId, grade, date, addDate, semesterNumber, isConstituent, isSemesterGrade, isSemesterProposition, isFinalGrade, isFinalProposition);
+                    Grade g = new Grade(id, lessonId, subjectId, categoryId, authorId, grade, date, addDate, semesterNumber, isConstituent, isSemesterGrade, isSemesterProposition, isFinalGrade, isFinalProposition, gradeCommentId);
                     Grades.Add(g);
                 }
                 grades = Grades;
@@ -477,7 +485,7 @@ namespace Synergia.NET
                 for(int i = 0; i < arr.Count; i++)
                 {
                     JObject gradeCategoryObject = arr[i].ToObject<JObject>();
-                    Log(i.ToString());
+
                     string id = gradeCategoryObject.GetValue("Id").ToString();
                     string name = gradeCategoryObject.GetValue("Name").ToString();
                     int weight;
@@ -501,6 +509,27 @@ namespace Synergia.NET
                 Log(ex.Message);
                 throw ex;
             }
+        }
+
+        public List<GradeComment> GetGradeComments()
+        {
+            JArray arr = JObject.Parse(Request("/Grades/Comments"))["Comments"].ToObject<JArray>();
+            List<GradeComment> result = new List<GradeComment>();
+
+            for (int i = 0; i < arr.Count; i++)
+            {
+                JObject obj = arr[i].ToObject<JObject>();
+
+                string id = obj.GetValue("Id").ToString();
+                string authorId = obj.SelectToken("AddedBy").ToObject<JObject>().GetValue("Id").ToString();
+                string gradeId = obj.SelectToken("Grade").ToObject<JObject>().GetValue("Id").ToString();
+                string text = obj.GetValue("Text").ToString();
+
+                GradeComment gc = new GradeComment(id, authorId, gradeId, text);
+                result.Add(gc);
+            }
+            gradeComments = result;
+            return result;
         }
         #endregion
 
@@ -638,6 +667,29 @@ namespace Synergia.NET
                 dictionary.Add(id, gc);
             }
             gradeCategoriesIdDictionary = dictionary;
+            return dictionary;
+        }
+
+        public Dictionary<string, GradeComment> GetGradeCommentsIDDictionary()
+        {
+            Dictionary<string, GradeComment> dictionary = new Dictionary<string, GradeComment>();
+            if (gradeComments == null)
+            {
+                GetGradeComments();
+            }
+
+            foreach (GradeComment gc in this.gradeComments)
+            {
+                string id = gc.ID;
+                dictionary.Add(id, gc);
+            }
+            /*
+             * Not all grades have a comment nor a comment property in server's JSON response,
+             * this ensures that an empty string is returned instead of an exception being thrown
+             *  when we try to get a comment for a grade that does not have one.
+             */
+            dictionary.Add("", new GradeComment("", "", "", ""));
+            gradeCommentsIdDictionary = dictionary;
             return dictionary;
         }
         #endregion
