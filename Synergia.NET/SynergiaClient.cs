@@ -12,10 +12,10 @@ namespace Synergia.NET
     public class SynergiaClient
     {
         #region Constants
-        private static string API_BASE_URL = @"https://api.librus.pl/2.0/";
-        private static string API_AUTH_URL = @"https://api.librus.pl/OAuth/Token";
-        private static string AUTH_TOKEN = @"MzU6NjM2YWI0MThjY2JlODgyYjE5YTMzZjU3N2U5NGNiNGY=";
-        private static string TAG = @"Synergia.NET:SynergiaClient: ";
+        private static readonly string API_BASE_URL = @"https://api.librus.pl/2.0/";
+        private static readonly string API_AUTH_URL = @"https://api.librus.pl/OAuth/Token";
+        private static readonly string AUTH_TOKEN = @"MzU6NjM2YWI0MThjY2JlODgyYjE5YTMzZjU3N2U5NGNiNGY=";
+        private static readonly string TAG = @"Synergia.NET:SynergiaClient: ";
         #endregion
 
         #region Variables
@@ -26,6 +26,7 @@ namespace Synergia.NET
         private Account account;
         private LuckyNumber lucky;
         private List<Subject> subjects;
+        private List<SubjectAverage> subjectAverages;
         private List<Teacher> teachers;
         private List<Lesson> lessons;
         private List<Event> events;
@@ -35,9 +36,9 @@ namespace Synergia.NET
         private List<Grade> grades;
         private List<GradeCategory> gradeCategories;
         private List<GradeComment> gradeComments;
-        private List<GradeAverage> gradeAverages;
 
         private Dictionary<string, Subject> subjectsIdDictionary;
+        private Dictionary<string, SubjectAverage> subjectAveragesIdDictionary;
         private Dictionary<string, Teacher> teachersIdDictionary;
         private Dictionary<string, Event> eventsIdDictionary;
         private Dictionary<string, EventCategory> eventCategoriesIdDictionary;
@@ -533,10 +534,10 @@ namespace Synergia.NET
             return result;
         }
 
-        public List<GradeAverage> GetGradeAverages()
+        public List<SubjectAverage> GetSubjectAverages()
         {
             JArray arr = JObject.Parse(Request("/Grades/Averages"))["Averages"].ToObject<JArray>();
-            List<GradeAverage> result = new List<GradeAverage>();
+            List<SubjectAverage> result = new List<SubjectAverage>();
 
             try
             {
@@ -549,10 +550,10 @@ namespace Synergia.NET
                     string secondSemester = averageObject.GetValue("Semester2").ToString();
                     string final = averageObject.GetValue("FullYear").ToString();
 
-                    GradeAverage ga = new GradeAverage(subjectId, firstSemester, secondSemester, final);
-                    result.Add(ga);
+                    SubjectAverage sa = new SubjectAverage(subjectId, firstSemester, secondSemester, final);
+                    result.Add(sa);
                 }
-                gradeAverages = result;
+                subjectAverages = result;
                 return result;
             }
             catch (Exception ex)
@@ -716,11 +717,28 @@ namespace Synergia.NET
             }
             /*
              * Not all grades have a comment nor a comment property in server's JSON response,
-             * this ensures that an empty string is returned instead of an exception being thrown
+             * this ensures that an empty string is returned (instead of an exception being thrown)
              *  when we try to get a comment for a grade that does not have one.
              */
             dictionary.Add(String.Empty, new GradeComment(String.Empty, String.Empty, String.Empty, String.Empty));
             gradeCommentsIdDictionary = dictionary;
+            return dictionary;
+        }
+
+        public Dictionary<string, SubjectAverage> GetSubjectAveragesIDDictionary()
+        {
+            Dictionary<string, SubjectAverage> dictionary = new Dictionary<string, SubjectAverage>();
+            if (subjectAverages == null)
+            {
+                GetSubjectAverages();
+            }
+
+            foreach (SubjectAverage sa in this.subjectAverages)
+            {
+                string id = sa.SubjectID;
+                dictionary.Add(id, sa);
+            }
+            subjectAveragesIdDictionary = dictionary;
             return dictionary;
         }
         #endregion

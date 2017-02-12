@@ -38,10 +38,11 @@ namespace SynergiaCLI
             Console.WriteLine("2. Lucky number");
             Console.WriteLine("3. Subjects");
             Console.WriteLine("4. Teachers");
-            Console.WriteLine("5. Subject - teacher map (lessons)");
+            Console.WriteLine("5. Lessons");
             Console.WriteLine("6. Events");
             Console.WriteLine("7. Attendances");
             Console.WriteLine("8. Grades");
+            Console.WriteLine("9. Averages");
 
             // Get input and display proper data
             char input = Console.ReadKey(false).KeyChar;
@@ -92,6 +93,12 @@ namespace SynergiaCLI
                 case '8':
                     displayHeader();
                     displayGrades();
+                    displayFooter();
+                    break;
+
+                case '9':
+                    displayHeader();
+                    displayAverages();
                     displayFooter();
                     break;
 
@@ -222,6 +229,25 @@ namespace SynergiaCLI
                 Console.WriteLine($"Category: {category}");
                 Console.WriteLine($"Comment: {comment}");
                 Console.WriteLine($"Date: {date}" + Environment.NewLine);
+            }
+        }
+
+        private static void displayAverages()
+        {
+            Console.WriteLine("Averages:");
+            List<SubjectAverage> sal = client.GetSubjectAverages();
+            Dictionary<string, Subject> sd = client.GetSubjectsIDDictionary();
+            for (int i = 0; i < sal.Count; i++)
+            {
+                string name = sd[sal[i].SubjectID].name;
+                string id = sal[i].SubjectID;
+                string firstSemester = sal[i].FirstSemester;
+                string secondSemeter = sal[i].SecondSemester;
+                string final = sal[i].FullYear;
+                Console.WriteLine($"Subject: {name} (id: {id})");
+                Console.WriteLine($"Fist semester: {firstSemester}");
+                Console.WriteLine($"Second semester: {secondSemeter}");
+                Console.WriteLine($"Final: {final}" + Environment.NewLine);
             }
         }
     }
