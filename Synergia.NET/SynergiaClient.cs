@@ -35,6 +35,7 @@ namespace Synergia.NET
         private List<Grade> grades;
         private List<GradeCategory> gradeCategories;
         private List<GradeComment> gradeComments;
+        private List<GradeAverage> gradeAverages;
 
         private Dictionary<string, Subject> subjectsIdDictionary;
         private Dictionary<string, Teacher> teachersIdDictionary;
@@ -531,6 +532,36 @@ namespace Synergia.NET
             gradeComments = result;
             return result;
         }
+
+        public List<GradeAverage> GetGradeAverages()
+        {
+            JArray arr = JObject.Parse(Request("/Grades/Averages"))["Averages"].ToObject<JArray>();
+            List<GradeAverage> result = new List<GradeAverage>();
+
+            try
+            {
+                for (int i = 0; i < arr.Count; i++)
+                {
+                    JObject averageObject = arr[i].ToObject<JObject>();
+
+                    string subjectId = averageObject.SelectToken("Subject").ToObject<JObject>().GetValue("Id").ToString();
+                    string firstSemester = averageObject.GetValue("Semester1").ToString();
+                    string secondSemester = averageObject.GetValue("Semester2").ToString();
+                    string final = averageObject.GetValue("FullYear").ToString();
+
+                    GradeAverage ga = new GradeAverage(subjectId, firstSemester, secondSemester, final);
+                    result.Add(ga);
+                }
+                gradeAverages = result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log("failed to parse response (averages)");
+                Log(ex.Message);
+                throw ex;
+            }
+        }
         #endregion
 
         #region Utils
@@ -688,7 +719,7 @@ namespace Synergia.NET
              * this ensures that an empty string is returned instead of an exception being thrown
              *  when we try to get a comment for a grade that does not have one.
              */
-            dictionary.Add("", new GradeComment("", "", "", ""));
+            dictionary.Add(String.Empty, new GradeComment(String.Empty, String.Empty, String.Empty, String.Empty));
             gradeCommentsIdDictionary = dictionary;
             return dictionary;
         }
