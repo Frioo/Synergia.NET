@@ -26,7 +26,7 @@ namespace Synergia.NET
         private Account account;
         private LuckyNumber lucky;
         private List<Subject> subjects;
-        private List<SubjectAverage> subjectAverages;
+        private List<Average> subjectAverages;
         private List<Teacher> teachers;
         private List<Lesson> lessons;
         private List<Event> events;
@@ -38,7 +38,7 @@ namespace Synergia.NET
         private List<GradeComment> gradeComments;
 
         private Dictionary<string, Subject> subjectsIdDictionary;
-        private Dictionary<string, SubjectAverage> subjectAveragesIdDictionary;
+        private Dictionary<string, Average> subjectAveragesIdDictionary;
         private Dictionary<string, Teacher> teachersIdDictionary;
         private Dictionary<string, Event> eventsIdDictionary;
         private Dictionary<string, EventCategory> eventCategoriesIdDictionary;
@@ -534,10 +534,10 @@ namespace Synergia.NET
             return result;
         }
 
-        public List<SubjectAverage> GetSubjectAverages()
+        public List<Average> GetSubjectAverages()
         {
             JArray arr = JObject.Parse(Request("/Grades/Averages"))["Averages"].ToObject<JArray>();
-            List<SubjectAverage> result = new List<SubjectAverage>();
+            List<Average> result = new List<Average>();
 
             try
             {
@@ -550,7 +550,7 @@ namespace Synergia.NET
                     string secondSemester = averageObject.GetValue("Semester2").ToString();
                     string final = averageObject.GetValue("FullYear").ToString();
 
-                    SubjectAverage sa = new SubjectAverage(subjectId, firstSemester, secondSemester, final);
+                    Average sa = new Average(subjectId, firstSemester, secondSemester, final);
                     result.Add(sa);
                 }
                 subjectAverages = result;
@@ -576,7 +576,7 @@ namespace Synergia.NET
 
             foreach(Subject s in this.subjects)
             {
-                string id = s.id.ToString();
+                string id = s.ID.ToString();
                 dictionary.Add(id, s);
             }
             subjectsIdDictionary = dictionary;
@@ -593,7 +593,7 @@ namespace Synergia.NET
 
             foreach(Teacher t in this.teachers)
             {
-                string id = t.id.ToString();
+                string id = t.ID.ToString();
                 dictionary.Add(id, t);
             }
             teachersIdDictionary = dictionary;
@@ -610,7 +610,7 @@ namespace Synergia.NET
 
             foreach(Event e in this.events)
             {
-                string id = e.id.ToString();
+                string id = e.ID.ToString();
                 dictionary.Add(id, e);
             }
             eventsIdDictionary = dictionary;
@@ -627,7 +627,7 @@ namespace Synergia.NET
 
             foreach(EventCategory ec in this.eventCategories)
             {
-                string id = ec.id.ToString();
+                string id = ec.ID.ToString();
                 dictionary.Add(id, ec);
             }
             eventCategoriesIdDictionary = dictionary;
@@ -644,7 +644,7 @@ namespace Synergia.NET
 
             foreach(Attendance a in this.attendances)
             {
-                string id = a.id.ToString();
+                string id = a.ID.ToString();
                 dictionary.Add(id, a);
             }
             attendancesIdDictionary = dictionary;
@@ -661,7 +661,7 @@ namespace Synergia.NET
 
             foreach (AttendanceCategory ac in this.attendanceCategories)
             {
-                string id = ac.id;
+                string id = ac.ID;
                 dictionary.Add(id, ac);
             }
             attendanceCategoriesIdDictionary = dictionary;
@@ -678,7 +678,7 @@ namespace Synergia.NET
 
             foreach(Grade g in this.grades)
             {
-                string id = g.id;
+                string id = g.ID;
                 dictionary.Add(id, g);
             }
             gradesIdDictionary = dictionary;
@@ -695,7 +695,7 @@ namespace Synergia.NET
 
             foreach(GradeCategory gc in this.gradeCategories)
             {
-                string id = gc.id;
+                string id = gc.ID;
                 dictionary.Add(id, gc);
             }
             gradeCategoriesIdDictionary = dictionary;
@@ -725,15 +725,15 @@ namespace Synergia.NET
             return dictionary;
         }
 
-        public Dictionary<string, SubjectAverage> GetSubjectAveragesIDDictionary()
+        public Dictionary<string, Average> GetSubjectAveragesIDDictionary()
         {
-            Dictionary<string, SubjectAverage> dictionary = new Dictionary<string, SubjectAverage>();
+            Dictionary<string, Average> dictionary = new Dictionary<string, Average>();
             if (subjectAverages == null)
             {
                 GetSubjectAverages();
             }
 
-            foreach (SubjectAverage sa in this.subjectAverages)
+            foreach (Average sa in this.subjectAverages)
             {
                 string id = sa.SubjectID;
                 dictionary.Add(id, sa);

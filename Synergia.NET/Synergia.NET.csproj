@@ -58,7 +58,7 @@
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\EventCategory.cs" />
     <Compile Include="Models\Grade.cs" />
-    <Compile Include="Models\SubjectAverage.cs" />
+    <Compile Include="Models\Average.cs" />
     <Compile Include="Models\GradeCategory.cs" />
     <Compile Include="Models\GradeComment.cs" />
     <Compile Include="Models\Lesson.cs" />

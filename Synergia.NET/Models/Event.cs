@@ -9,23 +9,23 @@ namespace Synergia.NET.Models
 {
     public class Event
     {
-        public string id { get; }
-        public string description { get; }
-        public LocalDate date { get; }
-        public string eventCategoryId { get; }
-        public int lessonNumber { get; }
-        public string authorId { get; }
-        public LocalDateTime addDate { get; }
+        public string ID { get; }
+        public string Description { get; }
+        public LocalDate Date { get; }
+        public string EventCategoryID { get; }
+        public int LessonNumber { get; }
+        public string AuthorID { get; }
+        public LocalDateTime AddDate { get; }
 
         public Event(string id, string description, LocalDate date, string eventCategoryId, int lessonNumber, string authorId, LocalDateTime addDate)
         {
-            this.id = id;
-            this.description = description;
-            this.date = date;
-            this.eventCategoryId = eventCategoryId;
-            this.lessonNumber = lessonNumber;
-            this.authorId = authorId;
-            this.addDate = addDate;
+            this.ID = id;
+            this.Description = description;
+            this.Date = date;
+            this.EventCategoryID = eventCategoryId;
+            this.LessonNumber = lessonNumber;
+            this.AuthorID = authorId;
+            this.AddDate = addDate;
         }
     }
 }

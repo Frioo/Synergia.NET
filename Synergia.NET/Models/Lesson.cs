@@ -8,15 +8,15 @@ namespace Synergia.NET.Models
 {
     public class Lesson
     {
-        public string id { get; }
-        public string teacherId { get; }
-        public string subjectId { get; }
+        public string ID { get; }
+        public string TeacherID { get; }
+        public string SubjectID { get; }
 
         public Lesson(string id, string teacherId, string subjectId)
         {
-            this.id = id;
-            this.teacherId = teacherId;
-            this.subjectId = subjectId;
+            this.ID = id;
+            this.TeacherID = teacherId;
+            this.SubjectID = subjectId;
         }
     }
 }

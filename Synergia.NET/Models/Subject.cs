@@ -8,19 +8,19 @@ namespace Synergia.NET.Models
 {
     public class Subject
     {
-        public int id { get; }
-        public string name { get; }
-        public string shortName { get; }
-        public int number { get; }
-        public bool isExtracurricular { get; }
+        public int ID { get; }
+        public string Name { get; }
+        public string ShortName { get; }
+        public int Number { get; }
+        public bool IsExtracurricular { get; }
 
         public Subject(int id, string name,string shortName, int number, bool isExtracurricular)
         {
-            this.id = id;
-            this.name = name;
-            this.shortName = shortName;
-            this.number = number;
-            this.isExtracurricular = isExtracurricular;
+            this.ID = id;
+            this.Name = name;
+            this.ShortName = shortName;
+            this.Number = number;
+            this.IsExtracurricular = isExtracurricular;
         }
     }
 }

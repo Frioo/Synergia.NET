@@ -9,38 +9,38 @@ namespace Synergia.NET.Models
 {
     public class Grade
     {
-        public string id { get; }
-        public string lessonId { get; }
-        public string subjectId { get; }
-        public string categoryId { get; }
-        public string authorId { get; }
-        public string grade { get; }
-        public LocalDate date { get; }
-        public LocalDateTime addDate { get; }
-        public int semesterNumber { get; }
-        public bool isConstituent { get; }
-        public bool isSemesterGrade { get; }
-        public bool isSemesterProposition { get; }
-        public bool isFinalGrade { get; }
-        public bool isFinalProposition { get; }
+        public string ID { get; }
+        public string LessonID { get; }
+        public string SubjectID { get; }
+        public string CategoryID { get; }
+        public string AuthorID { get; }
+        public string Value { get; }
+        public LocalDate Date { get; }
+        public LocalDateTime AddDate { get; }
+        public int SemesterNumber { get; }
+        public bool IsConstituent { get; }
+        public bool IsSemesterGrade { get; }
+        public bool IsSemesterProposition { get; }
+        public bool IsFinalGrade { get; }
+        public bool IsFinalProposition { get; }
         public string GradeCommentID { get; }
 
         public Grade(string id, string lessonId, string subjectId, string categoryId, string authorId, string grade, LocalDate date, LocalDateTime addDate, int semesterNumber, bool isConstituent,bool isSemesterGrade, bool isSemesterProposition, bool isFinalGrade, bool isFinalProposition, string gradeCommentId)
         {
-            this.id = id;
-            this.lessonId = lessonId;
-            this.subjectId = subjectId;
-            this.categoryId = categoryId;
-            this.authorId = authorId;
-            this.grade = grade;
-            this.date = date;
-            this.addDate = addDate;
-            this.semesterNumber = semesterNumber;
-            this.isConstituent = isConstituent;
-            this.isSemesterGrade = isSemesterGrade;
-            this.isSemesterProposition = isSemesterProposition;
-            this.isFinalGrade = isFinalGrade;
-            this.isFinalProposition = isFinalProposition;
+            this.ID = id;
+            this.LessonID = lessonId;
+            this.SubjectID = subjectId;
+            this.CategoryID = categoryId;
+            this.AuthorID = authorId;
+            this.Value = grade;
+            this.Date = date;
+            this.AddDate = addDate;
+            this.SemesterNumber = semesterNumber;
+            this.IsConstituent = isConstituent;
+            this.IsSemesterGrade = isSemesterGrade;
+            this.IsSemesterProposition = isSemesterProposition;
+            this.IsFinalGrade = isFinalGrade;
+            this.IsFinalProposition = isFinalProposition;
             this.GradeCommentID = gradeCommentId;
         }
     }

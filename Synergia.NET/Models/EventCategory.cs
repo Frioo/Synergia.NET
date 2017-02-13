@@ -8,13 +8,13 @@ namespace Synergia.NET.Models
 {
     public class EventCategory
     {
-        public string id { get; }
-        public string name { get; }
+        public string ID { get; }
+        public string Name { get; }
 
         public EventCategory(string id, string name)
         {
-            this.id = id;
-            this.name = name;
+            this.ID = id;
+            this.Name = name;
         }
     }
 }

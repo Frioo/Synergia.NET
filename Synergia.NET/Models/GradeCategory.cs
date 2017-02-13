@@ -8,16 +8,16 @@ namespace Synergia.NET.Models
 {
     public class GradeCategory
     {
-        public string id { get; }
-        public string name { get; }
-        public int weight { get; }
+        public string ID { get; }
+        public string Name { get; }
+        public int Weight { get; }
         // Color
 
         public GradeCategory(string id, string name, int weight)
         {
-            this.id = id;
-            this.name = name;
-            this.weight = weight;
+            this.ID = id;
+            this.Name = name;
+            this.Weight = weight;
         }
     }
 }

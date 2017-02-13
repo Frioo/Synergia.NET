@@ -8,18 +8,18 @@ namespace Synergia.NET.Models
 {
     public class Teacher
     {
-        public int id { get; }
-        public string firstName { get; }
-        public string lastName { get; }
-        public string fullName { get; }
+        public int ID { get; }
+        public string FirstName { get; }
+        public string LastName { get; }
+        public string FullName { get; }
         // public bool isSchoolAdministrator { get; }
 
         public Teacher(int id, string firstName, string lastName)
         {
-            this.id = id;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.fullName = firstName + " " + lastName;
+            this.ID = id;
+            this.FirstName = firstName;
+            this.LastName = lastName;
+            this.FullName = firstName + " " + lastName;
         }
     }
 }

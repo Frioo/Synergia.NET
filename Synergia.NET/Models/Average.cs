@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Synergia.NET.Models
 {
-    public class SubjectAverage
+    public class Average
     {
         public string SubjectID { get; }
         public string FirstSemester { get; }
         public string SecondSemester { get; }
         public string FullYear { get; }
 
-        public SubjectAverage(string subjectId, string firstSemester, string secondSemester, string fullYear)
+        public Average(string subjectId, string firstSemester, string secondSemester, string fullYear)
         {
             this.SubjectID = subjectId;
             this.FirstSemester = firstSemester;
