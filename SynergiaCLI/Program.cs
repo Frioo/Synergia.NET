@@ -7,7 +7,18 @@ namespace SynergiaCLI
 {
     class Program
     {
+        #region Variables
         private static SynergiaClient client = new SynergiaClient();
+        private static Account account;
+        private static LuckyNumber lucky;
+        private static List<Subject> subjects;
+        private static List<Teacher> teachers;
+        private static List<Lesson> lessons;
+        private static List<Event> events;
+        private static List<Attendance> attendances;
+        private static List<Grade> grades;
+        private static List<SubjectAverage> averages;
+        #endregion
 
         static void Main(string[] args)
         {
@@ -28,12 +39,14 @@ namespace SynergiaCLI
 
         private static void displayHeader()
         {
+            // Clear console screen and write header text (+ add an empty line at the bottom)
             Console.Clear();
             Console.WriteLine("Synergia.NET API test project\n");
         }
 
         private static void displayMenu()
         {
+            //Display menu options
             Console.WriteLine("1. Account");
             Console.WriteLine("2. Lucky number");
             Console.WriteLine("3. Subjects");
@@ -111,74 +124,95 @@ namespace SynergiaCLI
 
         private static void displayFooter()
         {
+            // Write bottom menu options
             Console.WriteLine("\n1. Back");
             Console.WriteLine("2. Exit");
 
+            // Get input and do proper actions
             char input = Console.ReadKey(false).KeyChar;
             switch(input)
             {
+                // User chose '1' so we display the main menu combo
                 case '1':
                     displayHeader();
                     displayMenu();
                     break;
 
+                // User chose '2' our program exits
                 case '2':
                     Environment.Exit(0);
                     break;
             }
         }
 
+
         private static void displayAccount()
         {
-            Account a = client.GetAccount();
-            Console.WriteLine("Account name: " + a.firstName + " " + a.lastName);
-            Console.WriteLine("Account login: " + a.login);
-            Console.WriteLine("Premium status: " + a.isPremium);
+            Console.WriteLine("Account:");
+            if (account == null)
+            {
+                account = client.GetAccount();
+            }
+            Console.WriteLine("Name: " + account.firstName + " " + account.lastName);
+            Console.WriteLine("Login: " + account.login);
+            Console.WriteLine("Premium status: " + account.isPremium);
         }
 
         private static void displayLuckyNumber()
         {
-            LuckyNumber ln = client.GetLuckyNumber();
-            Console.WriteLine("Lucky number: " + ln.Number);
-            Console.WriteLine("Lucky number day: " + ln.LuckyNumberDay.ToString());
+            if (lucky == null)
+            {
+                lucky = client.GetLuckyNumber();
+            }
+            Console.WriteLine("Lucky number: " + lucky.Number);
+            Console.WriteLine("Lucky number day: " + lucky.LuckyNumberDay.ToString());
         }
 
         private static void displaySubjects()
         {
             Console.WriteLine("Subjects:");
-            List<Subject> sl = client.GetSubjects();
-            Dictionary<string, Subject> sd = client.GetSubjectsIDDictionary();
-            for (int i = 0; i < sl.Count; i++)
+            if (subjects == null)
             {
-                string name = sl[i].name;
-                string id = sl[i].id.ToString();
-                Console.WriteLine("{0} (id: {1})", sd[id].name, id);
+                subjects = client.GetSubjects();
+            }
+            Dictionary<string, Subject> subjectDictionary = client.GetSubjectsIDDictionary();
+            for (int i = 0; i < subjects.Count; i++)
+            {
+                string name = subjects[i].name;
+                string id = subjects[i].id.ToString();
+                Console.WriteLine("{0} (id: {1})", subjectDictionary[id].name, id);
             }
         }
 
         private static void displayTeachers()
         {
             Console.WriteLine("Teachers:");
-            List<Teacher> tl = client.GetTeachers();
-            Dictionary<string, Teacher> td = client.GetTeachersIDDictionary();
-            for (int i = 0; i < tl.Count; i++)
+            if (teachers == null)
             {
-                string name = tl[i].fullName;
-                string id = tl[i].id.ToString();
-                Console.WriteLine("{0} (id: {1})", td[id].fullName, id);
+                teachers = client.GetTeachers();
+            }
+            Dictionary<string, Teacher> teacherDictionary = client.GetTeachersIDDictionary();
+            for (int i = 0; i < teachers.Count; i++)
+            {
+                string name = teachers[i].fullName;
+                string id = teachers[i].id.ToString();
+                Console.WriteLine("{0} (id: {1})", teacherDictionary[id].fullName, id);
             }
         }
 
         private static void displayLessons()
         {
             Console.WriteLine("Lessons:");
-            List<Lesson> ll = client.GetLessons();
-            Dictionary<string, Teacher> td = client.GetTeachersIDDictionary();
-            Dictionary<string, Subject> sd = client.GetSubjectsIDDictionary();
-            for(int i = 0; i < ll.Count; i++)
+            if (lessons == null)
             {
-                string teacherName = td[ll[i].teacherId.ToString()].fullName;
-                string subjectName = sd[ll[i].subjectId].name;
+                lessons = client.GetLessons();
+            }
+            Dictionary<string, Teacher> teachersDictionary = client.GetTeachersIDDictionary();
+            Dictionary<string, Subject> subjectDictionary = client.GetSubjectsIDDictionary();
+            for(int i = 0; i < lessons.Count; i++)
+            {
+                string teacherName = teachersDictionary[lessons[i].teacherId.ToString()].fullName;
+                string subjectName = subjectDictionary[lessons[i].subjectId].name;
                 Console.WriteLine("{0} - {1}", subjectName, teacherName);
             }
         }
@@ -186,14 +220,17 @@ namespace SynergiaCLI
         private static void displayEvents()
         {
             Console.WriteLine("Events:");
-            List<Event> el = client.GetEvents();
-            Dictionary<string, Teacher> td = client.GetTeachersIDDictionary();
-            Dictionary<string, EventCategory> ecd = client.GetEventCategoriesIDDictionary();
-            for(int i = 0; i < el.Count; i++)
+            if (events == null)
             {
-                string date = el[i].date.ToString();
-                string id = el[i].id.ToString();
-                string category = ecd[el[i].eventCategoryId].name;
+                events = client.GetEvents();
+            }
+            Dictionary<string, Teacher> teachersDictionary = client.GetTeachersIDDictionary();
+            Dictionary<string, EventCategory> eventCategoriesDictionary = client.GetEventCategoriesIDDictionary();
+            for(int i = 0; i < events.Count; i++)
+            {
+                string date = events[i].date.ToString();
+                string id = events[i].id.ToString();
+                string category = eventCategoriesDictionary[events[i].eventCategoryId].name;
                 Console.WriteLine("{0} - {1}(id: {2})", category, date, id);
             }
         }
@@ -201,13 +238,16 @@ namespace SynergiaCLI
         private static void displayAttendances()
         {
             Console.WriteLine("Attendances:");
-            List<Attendance> al = client.GetAttendances();
-            Dictionary<string, AttendanceCategory> acd = client.GetAttendanceCategoriesIDDictionary();
-            for(int i = 0; i < al.Count; i++)
+            if (attendances == null)
             {
-                string category = acd[al[i].typeId].name;
-                string date = al[i].date.ToString();
-                string id = al[i].id;
+                attendances = client.GetAttendances();
+            }
+            Dictionary<string, AttendanceCategory> attendanceCategoriesDictionary = client.GetAttendanceCategoriesIDDictionary();
+            for(int i = 0; i < attendances.Count; i++)
+            {
+                string category = attendanceCategoriesDictionary[attendances[i].typeId].name;
+                string date = attendances[i].date.ToString();
+                string id = attendances[i].id;
                 Console.WriteLine("{0} - {1} (id: {2})", category, date, id);
             }
         }
@@ -215,16 +255,19 @@ namespace SynergiaCLI
         private static void displayGrades()
         {
             Console.WriteLine("Grades:");
-            List<Grade> gl = client.GetGrades();
-            Dictionary<string, GradeCategory> gcad = client.GetGradeCategoriesIDDictionary();
-            Dictionary<string, GradeComment> gcod = client.GetGradeCommentsIDDictionary();
-            for(int i = 0; i < gl.Count; i++)
+            if (grades == null)
             {
-                string grade = gl[i].grade.ToString();
-                string category = gcad[gl[i].categoryId].name;
-                string comment = gcod[gl[i].GradeCommentID].Text;
-                string date = gl[i].date.ToString();
-                string id = gl[i].id;
+                grades = client.GetGrades();
+            }
+            Dictionary<string, GradeCategory> gradeCategoriesDictionary = client.GetGradeCategoriesIDDictionary();
+            Dictionary<string, GradeComment> gradeCommentsDictionary = client.GetGradeCommentsIDDictionary();
+            for(int i = 0; i < grades.Count; i++)
+            {
+                string grade = grades[i].grade.ToString();
+                string category = gradeCategoriesDictionary[grades[i].categoryId].name;
+                string comment = gradeCommentsDictionary[grades[i].GradeCommentID].Text;
+                string date = grades[i].date.ToString();
+                string id = grades[i].id;
                 Console.WriteLine($"Grade: {grade} (id: {id})");
                 Console.WriteLine($"Category: {category}");
                 Console.WriteLine($"Comment: {comment}");
@@ -235,15 +278,18 @@ namespace SynergiaCLI
         private static void displayAverages()
         {
             Console.WriteLine("Averages:");
-            List<SubjectAverage> sal = client.GetSubjectAverages();
-            Dictionary<string, Subject> sd = client.GetSubjectsIDDictionary();
-            for (int i = 0; i < sal.Count; i++)
+            if (averages == null)
             {
-                string name = sd[sal[i].SubjectID].name;
-                string id = sal[i].SubjectID;
-                string firstSemester = sal[i].FirstSemester;
-                string secondSemeter = sal[i].SecondSemester;
-                string final = sal[i].FullYear;
+                averages = client.GetSubjectAverages();
+            }
+            Dictionary<string, Subject> sd = client.GetSubjectsIDDictionary();
+            for (int i = 0; i < averages.Count; i++)
+            {
+                string name = sd[averages[i].SubjectID].name;
+                string id = averages[i].SubjectID;
+                string firstSemester = averages[i].FirstSemester;
+                string secondSemeter = averages[i].SecondSemester;
+                string final = averages[i].FullYear;
                 Console.WriteLine($"Subject: {name} (id: {id})");
                 Console.WriteLine($"Fist semester: {firstSemester}");
                 Console.WriteLine($"Second semester: {secondSemeter}");
