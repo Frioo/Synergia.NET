@@ -65,6 +65,7 @@
     <Compile Include="Models\LuckyNumber.cs" />
     <Compile Include="Models\Subject.cs" />
     <Compile Include="Models\Teacher.cs" />
+    <Compile Include="Models\TextGrade.cs" />
     <Compile Include="SynergiaClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

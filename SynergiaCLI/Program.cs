@@ -18,6 +18,7 @@ namespace SynergiaCLI
         private static List<Attendance> attendances;
         private static List<Grade> grades;
         private static List<Average> averages;
+        private static List<TextGrade> textGrades;
         #endregion
 
         static void Main(string[] args)
@@ -56,62 +57,69 @@ namespace SynergiaCLI
             Console.WriteLine("7. Attendances");
             Console.WriteLine("8. Grades");
             Console.WriteLine("9. Averages");
+            Console.WriteLine("10. Text grades");
 
             // Get input and display proper data
-            char input = Console.ReadKey(false).KeyChar;
+            var input = Console.ReadLine();
             switch (input)
             {
-                case '1':
+                case "1":
                     displayHeader();
                     displayAccount();
                     displayFooter();
                     break;
 
-                case '2':
+                case "2":
                     displayHeader();
                     displayLuckyNumber();
                     displayFooter();
                     break;
 
-                case '3':
+                case "3":
                     displayHeader();
                     displaySubjects();
                     displayFooter();
                     break;
 
-                case '4':
+                case "4":
                     displayHeader();
                     displayTeachers();
                     displayFooter();
                     break;
                 
-                case '5':
+                case "5":
                     displayHeader();
                     displayLessons();
                     displayFooter();
                     break;
 
-                case '6':
+                case "6":
                     displayHeader();
                     displayEvents();
                     displayFooter();
                     break;
 
-                case '7':
+                case "7":
                     displayHeader();
                     displayAttendances();
                     displayFooter();
                     break;
 
-                case '8':
+                case "8":
                     displayHeader();
                     displayGrades();
                     displayFooter();
                     break;
 
-                case '9':
+                case "9":
                     displayHeader();
                     displayAverages();
+                    displayFooter();
+                    break;
+
+                case "10":
+                    displayHeader();
+                    displayTextGrades();
                     displayFooter();
                     break;
 
@@ -294,6 +302,24 @@ namespace SynergiaCLI
                 Console.WriteLine($"Fist semester: {firstSemester}");
                 Console.WriteLine($"Second semester: {secondSemeter}");
                 Console.WriteLine($"Final: {final}" + Environment.NewLine);
+            }
+        }
+
+        private static void displayTextGrades()
+        {
+            Console.WriteLine("Text grades:");
+            if (textGrades == null)
+            {
+                textGrades = client.GetTextGrades();
+            }
+            Dictionary<string, Subject> subjectDictionary = client.GetSubjectsIDDictionary();
+            for (int i = 0; i < textGrades.Count; i++)
+            {
+                string grade = textGrades[i].Grade;
+                string id = textGrades[i].ID;
+                string subject = subjectDictionary[textGrades[i].SubjectID].Name;
+                Console.WriteLine($"Grade: {grade} (id: {id})");
+                Console.WriteLine($"Subject: {subject}" + Environment.NewLine);
             }
         }
     }

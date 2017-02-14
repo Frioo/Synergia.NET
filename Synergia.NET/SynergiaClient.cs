@@ -36,6 +36,7 @@ namespace Synergia.NET
         private List<Grade> grades;
         private List<GradeCategory> gradeCategories;
         private List<GradeComment> gradeComments;
+        private List<TextGrade> textGrades;
 
         private Dictionary<string, Subject> subjectsIdDictionary;
         private Dictionary<string, Average> subjectAveragesIdDictionary;
@@ -559,6 +560,45 @@ namespace Synergia.NET
             catch (Exception ex)
             {
                 Log("failed to parse response (averages)");
+                Log(ex.Message);
+                throw ex;
+            }
+        }
+
+        public List<TextGrade> GetTextGrades()
+        {
+            JArray arr = JObject.Parse(Request("/TextGrades"))["Grades"].ToObject<JArray>();
+            List<TextGrade> result = new List<TextGrade>();
+
+            try
+            {
+                for (int i = 0; i < arr.Count; i++)
+                {
+                    JObject textGradeObject = arr[i].ToObject<JObject>();
+
+                    string id = textGradeObject.GetValue("Id").ToString();
+                    string lessonId = textGradeObject.SelectToken("Lesson").ToObject<JObject>().GetValue("Id").ToString();
+                    string subjectId = textGradeObject.SelectToken("Subject").ToObject<JObject>().GetValue("Id").ToString();
+                    string authorId = textGradeObject.SelectToken("AddedBy").ToObject<JObject>().GetValue("Id").ToString();
+                    string categoryId = textGradeObject.SelectToken("Category").ToObject<JObject>().GetValue("Id").ToString();
+                    string grade = textGradeObject.GetValue("Grade").ToString();
+                    LocalDate date = LocalDatePattern.CreateWithInvariantCulture("yyyy-MM-dd").Parse(textGradeObject.GetValue("Date").ToString()).Value;
+                    LocalDateTime addDate = LocalDateTimePattern.CreateWithInvariantCulture("yyyy-MM-dd HH:mm:ss").Parse(textGradeObject.GetValue("AddDate").ToString()).Value;
+                    int semesterNumber = int.Parse(textGradeObject.GetValue("Semester").ToString());
+                    bool isSemester = bool.Parse(textGradeObject.GetValue("IsSemester").ToString());
+                    bool isSemesterProposition = bool.Parse(textGradeObject.GetValue("IsSemesterProposition").ToString());
+                    bool isFinal = bool.Parse(textGradeObject.GetValue("IsFinal").ToString());
+                    bool isFinalProposition = bool.Parse(textGradeObject.GetValue("IsFinalProposition").ToString());
+
+                    TextGrade tg = new TextGrade(id, lessonId, subjectId, authorId, categoryId, grade, date, addDate, semesterNumber, isSemester, isSemesterProposition, isFinal, isFinalProposition);
+                    result.Add(tg);
+                }
+                textGrades = result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Log("failed to parse response (text grades)");
                 Log(ex.Message);
                 throw ex;
             }
