@@ -37,6 +37,9 @@ namespace Synergia.NET
         private List<GradeCategory> gradeCategories;
         private List<GradeComment> gradeComments;
         private List<TextGrade> textGrades;
+        List<Announcement> announcements;
+        //private List<Message> messages;
+        //private MessagesHelper messagesHelper;
 
         private Dictionary<string, Subject> subjectsIdDictionary;
         private Dictionary<string, Average> subjectAveragesIdDictionary;
@@ -48,6 +51,7 @@ namespace Synergia.NET
         private Dictionary<string, Grade> gradesIdDictionary;
         private Dictionary<string, GradeCategory> gradeCategoriesIdDictionary;
         private Dictionary<string, GradeComment> gradeCommentsIdDictionary;
+        private Dictionary<string, Lesson> lessonsIdDictionary;
         #endregion
 
         #region Core
@@ -223,7 +227,7 @@ namespace Synergia.NET
                 {
                     JObject subjectObject = arr[i].ToObject<JObject>();
 
-                    int id = int.Parse(subjectObject.GetValue("Id").ToString());
+                    string id = subjectObject.GetValue("Id").ToString();
                     string name = subjectObject.GetValue("Name").ToString();
                     string shortName = subjectObject.GetValue("Short").ToString();
                     int number = int.Parse(subjectObject.GetValue("No").ToString());
@@ -414,8 +418,9 @@ namespace Synergia.NET
                     string id = attendanceCategoryObject.GetValue("Id").ToString();
                     string name = attendanceCategoryObject.GetValue("Name").ToString();
                     string shortName = attendanceCategoryObject.GetValue("Short").ToString();
+                    bool isPresenceType = bool.Parse(attendanceCategoryObject.GetValue("IsPresenceKind").ToString());
 
-                    AttendanceCategory attendanceCategory = new AttendanceCategory(id, name, shortName);
+                    AttendanceCategory attendanceCategory = new AttendanceCategory(id, name, shortName, isPresenceType);
                     AttendanceCategories.Add(attendanceCategory);
                 }
                 attendanceCategories = AttendanceCategories;
@@ -603,9 +608,77 @@ namespace Synergia.NET
                 throw ex;
             }
         }
+
+        public List<Announcement> GetAnnouncements()
+        {
+            JArray arr = JObject.Parse(Request("/SchoolNotices"))["SchoolNotices"].ToObject<JArray>();
+            List<Announcement> res = new List<Announcement>();
+
+            try
+            {
+                for (int i = 0; i < arr.Count; i++)
+                {
+                    JObject announcementObject = arr[i].ToObject<JObject>();
+
+                    string id = announcementObject.GetValue("Id").ToString();
+                    LocalDate start = LocalDatePattern.CreateWithInvariantCulture("yyyy-MM-dd").Parse(announcementObject.GetValue("StartDate").ToString()).Value;
+                    LocalDate end = LocalDatePattern.CreateWithInvariantCulture("yyyy-MM-dd").Parse(announcementObject.GetValue("EndDate").ToString()).Value;
+                    string subject = announcementObject.GetValue("Subject").ToString();
+                    string content = announcementObject.GetValue("Content").ToString();
+                    string authorId = announcementObject.SelectToken("AddedBy").ToObject<JObject>().GetValue("Id").ToString();
+
+                    Announcement a = new Announcement(id, start, end, subject, content, authorId);
+                    res.Add(a);
+                }
+                announcements = res;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                Log("failed to parse response (announcements)");
+                Log(ex.Message);
+                throw ex;
+            }
+        }
+
+        /*private List<Message> GetMessages()
+        {
+            JObject root = JObject.Parse(Request("Messages"));
+            JObject pagesInfo = root["Pages"].ToObject<JObject>();
+            JArray messageArray = root["Messages"].ToObject<JArray>();
+
+            // Pages info
+            int limit = int.Parse(pagesInfo.GetValue("Limit").ToString());
+            int currentPage = int.Parse(pagesInfo.GetValue("CurrentPage").ToString());
+            int next = int.Parse(pagesInfo.GetValue("Next").ToString().Replace(@"http://api.librus.pl/2.0/Messages/?", String.Empty));
+            int totalPages = int.Parse(pagesInfo.GetValue("AllPages").ToString());
+            int totalMessages = int.Parse(pagesInfo.GetValue("AllMessages").ToString());
+
+            // Messages
+            for (int i = 0; i < messageArray.Count; i++)
+            {
+                JObject messageObj = messageArray[i].ToObject<JObject>();
+                string id = messageObj.GetValue("Id").ToString();
+                bool isNote = bool.Parse(messageObj.GetValue("IsNote").ToString());
+                bool isDeleted = bool.Parse(messageObj.GetValue("IsTrash").ToString());
+                bool isSent = bool.Parse(messageObj.GetValue("IsSended").ToString());
+                bool isReceived = bool.Parse(messageObj.GetValue("IsReceived").ToString());
+                bool isArchived = bool.Parse(messageObj.GetValue("IsArchive").ToString());
+                bool isSpam = bool.Parse(messageObj.GetValue("IsSpam").ToString());
+                string receiverId = messageObj.SelectToken("Receiver").ToObject<JObject>().GetValue("Id").ToString();
+                string senderId = messageObj.SelectToken("Sender").ToObject<JObject>().GetValue("Id").ToString();
+                int sendDate = int.Parse(messageObj.GetValue("SendDate").ToString());
+                int readDate = int.Parse(messageObj.SelectToken("ReadDates").ToObject<JArray>()[0].ToObject<JObject>().GetValue("ReadDate").ToString());
+            }
+        }*/
         #endregion
 
         #region Utils
+        public enum Limit
+        {
+            Default = 10
+        }
+
         public Dictionary<string, Subject> GetSubjectsIDDictionary()
         {
             Dictionary<string, Subject> dictionary = new Dictionary<string, Subject>();
@@ -779,6 +852,23 @@ namespace Synergia.NET
                 dictionary.Add(id, sa);
             }
             subjectAveragesIdDictionary = dictionary;
+            return dictionary;
+        }
+
+        public Dictionary<string, Lesson> GetLessonsIDDictionary()
+        {
+            Dictionary<string, Lesson> dictionary = new Dictionary<string, Lesson>();
+            if (lessons == null)
+            {
+                GetLessons();
+            }
+
+            foreach (Lesson l in lessons)
+            {
+                string id = l.ID;
+                dictionary.Add(id, l);
+            }
+            lessonsIdDictionary = dictionary;
             return dictionary;
         }
         #endregion

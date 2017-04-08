@@ -52,7 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MessagesHelper.cs" />
     <Compile Include="Models\Account.cs" />
+    <Compile Include="Models\Announcement.cs" />
     <Compile Include="Models\Attendance.cs" />
     <Compile Include="Models\AttendanceCategory.cs" />
     <Compile Include="Models\Event.cs" />
@@ -63,6 +65,7 @@
     <Compile Include="Models\GradeComment.cs" />
     <Compile Include="Models\Lesson.cs" />
     <Compile Include="Models\LuckyNumber.cs" />
+    <Compile Include="Models\Message.cs" />
     <Compile Include="Models\Subject.cs" />
     <Compile Include="Models\Teacher.cs" />
     <Compile Include="Models\TextGrade.cs" />

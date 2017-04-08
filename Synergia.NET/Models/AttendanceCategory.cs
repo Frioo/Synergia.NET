@@ -11,13 +11,15 @@ namespace Synergia.NET.Models
         public string ID { get; }
         public string Name { get; }
         public string ShortName { get; }
+        public bool IsPresenceType { get; }
         // ColorRGB
 
-        public AttendanceCategory(string id, string name, string shortName)
+        public AttendanceCategory(string id, string name, string shortName, bool isPresenceType)
         {
             this.ID = id;
             this.Name = name;
             this.ShortName = shortName;
+            this.IsPresenceType = isPresenceType;
         }
     }
 }

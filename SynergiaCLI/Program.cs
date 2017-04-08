@@ -19,6 +19,7 @@ namespace SynergiaCLI
         private static List<Grade> grades;
         private static List<Average> averages;
         private static List<TextGrade> textGrades;
+        private static List<Announcement> announcements;
         #endregion
 
         static void Main(string[] args)
@@ -58,6 +59,7 @@ namespace SynergiaCLI
             Console.WriteLine("8. Grades");
             Console.WriteLine("9. Averages");
             Console.WriteLine("10. Text grades");
+            Console.WriteLine("11. Announcements");
 
             // Get input and display proper data
             var input = Console.ReadLine();
@@ -120,6 +122,12 @@ namespace SynergiaCLI
                 case "10":
                     displayHeader();
                     displayTextGrades();
+                    displayFooter();
+                    break;
+
+                case "11":
+                    displayHeader();
+                    displayAnnouncements();
                     displayFooter();
                     break;
 
@@ -221,7 +229,8 @@ namespace SynergiaCLI
             {
                 string teacherName = teachersDictionary[lessons[i].TeacherID.ToString()].FullName;
                 string subjectName = subjectDictionary[lessons[i].SubjectID].Name;
-                Console.WriteLine("{0} - {1}", subjectName, teacherName);
+                string subjectId = lessons[i].SubjectID;
+                Console.WriteLine("{0} (id: {1}) - {2}", subjectName, subjectId, teacherName);
             }
         }
 
@@ -320,6 +329,24 @@ namespace SynergiaCLI
                 string subject = subjectDictionary[textGrades[i].SubjectID].Name;
                 Console.WriteLine($"Grade: {grade} (id: {id})");
                 Console.WriteLine($"Subject: {subject}" + Environment.NewLine);
+            }
+        }
+
+        private static void displayAnnouncements()
+        {
+            Console.WriteLine("Announcements:");
+            if (announcements == null)
+            {
+                announcements = client.GetAnnouncements();
+            }
+            for (int i = 0; i < announcements.Count; i++)
+            {
+                string id = announcements[i].ID;
+                string subject = announcements[i].Subject;
+                string content = announcements[i].Content;
+                Console.WriteLine("ID: {0}", id);
+                Console.WriteLine("Subject: {0}", subject);
+                Console.WriteLine("Content: {0}", content + Environment.NewLine);
             }
         }
     }
