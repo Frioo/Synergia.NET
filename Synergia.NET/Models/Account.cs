@@ -6,6 +6,7 @@
         public string UserID { get; }
         public string FirstName { get; }
         public string LastName { get; }
+        public string FullName { get { return FirstName + " " + LastName; } }
         public string Email { get; }
         public string Login { get; }
         public bool IsPremium { get; }
