@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Synergia.NET", "Synergia.NET\Synergia.NET.csproj", "{85D2EEF4-EDAD-4070-85F0-13ED6FAF4D4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SynergiaCLI", "SynergiaCLI\SynergiaCLI.csproj", "{E30E15C9-031B-4DD2-A5D8-A8C614779D54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SynergiaTest", "SynergiaCLI\SynergiaTest.csproj", "{E30E15C9-031B-4DD2-A5D8-A8C614779D54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SynergiaConsole", "SynergiaConsole\SynergiaConsole.csproj", "{149CEB6D-789E-4571-A8C8-B76E33F66B3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +23,15 @@ Global
 		{E30E15C9-031B-4DD2-A5D8-A8C614779D54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E30E15C9-031B-4DD2-A5D8-A8C614779D54}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E30E15C9-031B-4DD2-A5D8-A8C614779D54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{149CEB6D-789E-4571-A8C8-B76E33F66B3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{149CEB6D-789E-4571-A8C8-B76E33F66B3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{149CEB6D-789E-4571-A8C8-B76E33F66B3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{149CEB6D-789E-4571-A8C8-B76E33F66B3C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C2179970-2D50-47A1-8EFA-90BFDEF8A83D}
 	EndGlobalSection
 EndGlobal
