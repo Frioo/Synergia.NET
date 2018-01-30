@@ -1,3 +1,6 @@
+# This project is being re-written for better code style, stability and general ease of use.  
+## It is advised to use this API for testing purposes only, since the new version won't be fully compatible.
+
 # Synergia.NET
 C# REST API for Librus Synergia
 
